@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "502805024347",
+    "firebase_url": "https://sardine-b43e1.firebaseio.com",
+    "project_id": "sardine-b43e1",
+    "storage_bucket": "sardine-b43e1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:502805024347:android:d823ac55f8574221",
+        "android_client_info": {
+          "package_name": "com.fish.sardine.sardine"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "502805024347-3psek8cdkalnqrncfsfvi6a3dgbojklh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fish.sardine.sardine",
+            "certificate_hash": "8d05b3cfcdbaa6b9069cc9e422709ccbb1af2903"
+          }
+        },
+        {
+          "client_id": "502805024347-e5hmliovmu1ckab0gues3fjolvef1o87.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBh46Ka28Spb-Tek1yVK5GloIXylS0WMjQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "502805024347-e5hmliovmu1ckab0gues3fjolvef1o87.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
