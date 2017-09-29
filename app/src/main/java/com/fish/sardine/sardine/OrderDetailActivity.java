@@ -1,8 +1,15 @@
 package com.fish.sardine.sardine;
 
+import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.graphics.Palette;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
@@ -20,13 +27,18 @@ import java.text.ParseException;
 public class OrderDetailActivity extends AppCompatActivity {
     FishClass fishClass;
     TextView eng,mal,price,total;
-    ImageView image;
+    ImageView image,bg_image;
     EditText quantity;
     FloatingActionButton add,remove;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        fishClass = (FishClass) getIntent().getSerializableExtra("fish");
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Log.d("RGB",fishClass.rgb+"");
+            getWindow().setStatusBarColor(fishClass.rgb);
+        }
         setContentView(R.layout.activity_order);
         eng = (TextView) findViewById(R.id.english_text);
         mal = (TextView) findViewById(R.id.malayalam_text);
@@ -34,21 +46,30 @@ public class OrderDetailActivity extends AppCompatActivity {
         total = (TextView) findViewById(R.id.total);
 
         image = (ImageView) findViewById(R.id.image);
+        bg_image = (ImageView) findViewById(R.id.background_image);
         quantity = (EditText) findViewById(R.id.quantity);
         add = (FloatingActionButton) findViewById(R.id.add_button);
         remove = (FloatingActionButton) findViewById(R.id.remove_button);
 
-        fishClass = (FishClass) getIntent().getSerializableExtra("fish");
         eng.setText(fishClass.eng);
         mal.setText(fishClass.mal);
         price.setText(fishClass.price);
         quantity.setText("1.0");
         total.setText(fishClass.price);
+        add.setBackgroundTintList(ColorStateList.valueOf(fishClass.rgb));
+        remove.setBackgroundTintList(ColorStateList.valueOf(fishClass.rgb));
+        quantity.getBackground().mutate().setColorFilter(fishClass.rgb, PorterDuff.Mode.SRC_ATOP);
+
         Picasso.with(OrderDetailActivity.this)
                 .load(fishClass.img)
                 .placeholder(R.mipmap.ic_launcher)
                 .error(R.drawable.ic_bookmark_24dp)
                 .into(image);
+        Picasso.with(OrderDetailActivity.this)
+                .load(fishClass.img)
+                .placeholder(R.mipmap.ic_launcher)
+                .error(R.drawable.ic_bookmark_24dp)
+                .into(bg_image);
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -124,4 +145,6 @@ public class OrderDetailActivity extends AppCompatActivity {
     public void onBackPressed() {
         supportFinishAfterTransition();
     }
+
+
 }

@@ -3,7 +3,9 @@ package com.fish.sardine.sardine.login;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -34,10 +36,14 @@ import android.widget.Toast;
 
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import com.fish.sardine.sardine.MainActivity;
 import com.fish.sardine.sardine.R;
+import com.fish.sardine.sardine.Utils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
@@ -48,6 +54,9 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -69,10 +78,28 @@ public class LoginActivity extends AppCompatActivity  {
     String TAG = "Login";
     private String mVerificationId;
     PhoneAuthProvider.ForceResendingToken mResendToken;
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
+    ProgressDialog progressDialog;
+    DatabaseReference mRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sharedPreferences = getSharedPreferences(Utils.pref,MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        if(sharedPreferences.contains("phone"))
+        {
+            if(sharedPreferences.contains("address")) {
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                finish();
+            }
+            else
+            {
+                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+                finish();
+            }
+        }
         setContentView(R.layout.activity_login);
         mPhone = (EditText) findViewById(R.id.phone_login);
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
@@ -83,6 +110,7 @@ public class LoginActivity extends AppCompatActivity  {
             }
         });
         mLoginFormView = findViewById(R.id.login_form);
+        mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener(){
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -92,17 +120,11 @@ public class LoginActivity extends AppCompatActivity  {
                 }
             }
         };
+
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 attemptLogin();
-            }
-        });
-        create_account = (TextView) findViewById(R.id.create_account);
-        create_account.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(LoginActivity.this,RegisterActivity.class));
             }
         });
     }
@@ -114,16 +136,9 @@ public class LoginActivity extends AppCompatActivity  {
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {// Reset errors.
-       /* mEmail.setError(null);
-        mPasswordView.setError(null);*/
-
-        // Store values at the time of the login attempt.
         String phone = mPhone.getText().toString();
-
-
         boolean cancel = false;
         View focusView = null;
-
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(phone)) {
@@ -144,6 +159,7 @@ public class LoginActivity extends AppCompatActivity  {
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
+
             mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
                 @Override
@@ -155,7 +171,9 @@ public class LoginActivity extends AppCompatActivity  {
                     //     detect the incoming verification SMS and perform verificaiton without
                     //     user action.
                     Log.d(TAG, "onVerificationCompleted:" + credential);
-
+                    progressDialog.dismiss();
+                    progressDialog.setTitle("Logging In");
+                    progressDialog.show();
                     signInWithPhoneAuthCredential(credential);
                 }
 
@@ -164,7 +182,7 @@ public class LoginActivity extends AppCompatActivity  {
                     // This callback is invoked in an invalid request for verification is made,
                     // for instance if the the phone number format is not valid.
                     Log.w(TAG, "onVerificationFailed", e);
-
+                    progressDialog.dismiss();
                     if (e instanceof FirebaseAuthInvalidCredentialsException) {
                         // Invalid request
                         // ...
@@ -186,6 +204,9 @@ public class LoginActivity extends AppCompatActivity  {
                     Log.d(TAG, "onCodeSent:" + verificationId);
 
                     // Save verification ID and resending token so we can use them later
+                    progressDialog = new ProgressDialog(LoginActivity.this);
+                    progressDialog.setTitle("Sending Verification Code");
+                    progressDialog.show();
                     mVerificationId = verificationId;
                     mResendToken = token;
 
@@ -207,12 +228,27 @@ public class LoginActivity extends AppCompatActivity  {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
+                            progressDialog.dismiss();
                             Log.d(TAG, "signInWithCredential:success");
+                            final FirebaseUser user = task.getResult().getUser();
+                            progressDialog.setTitle("Saving to Server");
+                            progressDialog.show();
+                            mRef = FirebaseDatabase.getInstance().getReference();
+                            mRef.child("Phone Reference").child(user.getPhoneNumber()).setValue(user.getUid(), new DatabaseReference.CompletionListener(){
+                                @Override
+                                public void onComplete(DatabaseError
+                                databaseError, DatabaseReference databaseReference) {
+                                    progressDialog.dismiss();
+                                    editor.putString("phone",user.getPhoneNumber());
+                                    editor.putString("uid",user.getUid());
+                                    editor.commit();
+                                    startActivity(new Intent(LoginActivity.this,RegisterActivity.class));
+                                }
+                            });
 
-                            FirebaseUser user = task.getResult().getUser();
-                            Toast.makeText(LoginActivity.this,user.getPhoneNumber(),Toast.LENGTH_LONG).show();
                         } else {
                             // Sign in failed, display a message and update the UI
+                            progressDialog.dismiss();
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                                 // The verification code entered was invalid

@@ -32,7 +32,6 @@
             android:id="@+id/email_login_form"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
             android:layout_marginBottom="100dp"
             android:orientation="vertical"
             android:paddingBottom="@dimen/activity_vertical_margin"
@@ -49,53 +48,39 @@
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:textColorHint="#000">
+                android:textColorHint="#000"
+                android:layout_marginTop="20dp">
 
                 <EditText
-                    android:id="@+id/email_login"
+                    android:id="@+id/phone_login"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_phone"
-                    android:inputType="textEmailAddress"
+                    android:inputType="phone"
                     android:maxLines="1"
                     android:singleLine="true"
                     android:textColor="#000"/>
 
             </android.support.design.widget.TextInputLayout>
 
-            <Button
-                android:id="@+id/email_sign_in_button"
-                style="?android:textAppearanceSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/action_sign_in"
-                android:layout_marginBottom="16dp"
-                android:textStyle="bold"
-                android:background="#00000000"
-                android:textColor="#000"
-                android:layout_gravity="center"
-                android:padding="5dp"/>
-                <TextView
-                    android:layout_gravity="right"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:text="Forgot password ?"
-                    android:textColor="#000"/>
 
-                <TextView
-                    android:id="@+id/create_account"
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="center"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:layout_height="wrap_content"
-                    android:text="Create account"
-                    android:textColor="#000"/>
+
 
 
         </LinearLayout>
     </ScrollView>
+    <Button
+        android:id="@+id/email_sign_in_button"
+        style="?android:textAppearanceSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/action_sign_in"
+        android:layout_marginBottom="16dp"
+        android:textStyle="bold"
+        android:background="#00000000"
+        android:textColor="#000"
+        android:padding="5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"/>
 </RelativeLayout>

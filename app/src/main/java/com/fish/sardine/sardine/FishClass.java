@@ -8,6 +8,7 @@ import java.io.Serializable;
 
 public class FishClass implements Serializable{
     String eng,mal,img,price;
+    int rgb;
 
     @Override
     public String toString() {
