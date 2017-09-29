@@ -7,9 +7,9 @@
     app:cardUseCompatPadding="true"
     android:layout_gravity="center"
     >
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
         <ImageView
             android:id="@+id/image"
@@ -20,10 +20,12 @@
             />
 
         <android.support.v7.widget.LinearLayoutCompat
+            android:id="@+id/upperLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="24dp">
+            android:padding="24dp"
+            android:layout_below="@+id/image">
 
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/malayalam_text"
@@ -71,8 +73,14 @@
                     />
 
             </android.support.v7.widget.LinearLayoutCompat>
-
-
         </android.support.v7.widget.LinearLayoutCompat>
-    </LinearLayout>
+        <Button
+            android:id="@+id/btn_buy"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:text="Buy now"
+            android:theme="@style/PrimaryButton" />
+    </RelativeLayout>
 </android.support.v7.widget.CardView>

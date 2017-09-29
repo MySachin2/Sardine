@@ -34,12 +34,26 @@
             android:textSize="30sp" />
 
         <TextView
-            android:id="@+id/description"
+            android:id="@+id/quantity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/title"
             android:layout_toRightOf="@+id/imageView"
-            android:text="Description" />
+            android:text="Quantity" />
+        <TextView
+            android:id="@+id/total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/quantity"
+            android:layout_toRightOf="@+id/imageView"
+            android:text="Total" />
+        <TextView
+            android:id="@+id/pay_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/quantity"
+            android:layout_alignParentRight="true"
+            android:text="Paid" />
 
     </RelativeLayout>
 

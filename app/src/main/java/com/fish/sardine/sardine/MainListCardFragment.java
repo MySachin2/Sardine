@@ -57,7 +57,7 @@ public class MainListCardFragment extends Fragment {
                                         fishClass.rgb = palette.getMutedColor(0xFF0000);
                                     }
                                 });
-                        rootview.setOnClickListener(new View.OnClickListener() {
+                        rootview.findViewById(R.id.btn_buy).setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 Intent intent = new Intent(getActivity(), OrderDetailActivity.class);
