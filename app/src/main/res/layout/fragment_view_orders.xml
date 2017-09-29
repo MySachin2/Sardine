@@ -3,21 +3,16 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Orders"
         android:textSize="18sp"
         android:padding="16dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"/>
-    <RelativeLayout
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/orders_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/orders_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-    </RelativeLayout>
-
+        android:layout_height="match_parent"/>
 
 </LinearLayout>
