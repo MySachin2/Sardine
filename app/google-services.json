@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "502805024347-cjt014sklf8ijbnobpt9n56453b70jdb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fish.sardine.sardine",
+            "certificate_hash": "4c9c98e7a1aff9b691c61a7c68abafa7e15247dc"
+          }
+        },
+        {
           "client_id": "502805024347-3psek8cdkalnqrncfsfvi6a3dgbojklh.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -42,6 +50,13 @@
             {
               "client_id": "502805024347-e5hmliovmu1ckab0gues3fjolvef1o87.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "502805024347-j48bf5enjgujfssg6geg6t2uqiqqamko.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.phacsin.foodtracker"
+              }
             }
           ]
         },
