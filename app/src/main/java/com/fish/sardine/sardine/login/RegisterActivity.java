@@ -129,6 +129,7 @@ public class RegisterActivity extends AppCompatActivity  {
                    @Override
                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                        editor.putString("address",address_edit.getText().toString());
+                       editor.putString("name",name_edit.getText().toString());
                        editor.commit();
                        startActivity(new Intent(RegisterActivity.this,MainActivity.class));
                    }

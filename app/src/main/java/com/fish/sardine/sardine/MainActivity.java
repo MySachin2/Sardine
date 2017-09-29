@@ -1,5 +1,6 @@
 package com.fish.sardine.sardine;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.design.widget.NavigationView;
@@ -10,26 +11,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     DrawerLayout drawer;
     NavigationView navigationView;
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-       /* FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
+        sharedPreferences = getSharedPreferences(Utils.pref,MODE_PRIVATE);
+        editor = sharedPreferences.edit();
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -41,6 +38,12 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         getSupportFragmentManager().beginTransaction().add(R.id.container, new MainListFragment(),"MainFragment").commit();
         navigationView.getMenu().getItem(0).setChecked(true);
+        TextView name = navigationView.getHeaderView(0).findViewById(R.id.display_name);
+        TextView phone = navigationView.getHeaderView(0).findViewById(R.id.display_phone);
+
+        name.setText(sharedPreferences.getString("name",""));
+        phone.setText(sharedPreferences.getString("phone",""));
+
     }
 
     @Override

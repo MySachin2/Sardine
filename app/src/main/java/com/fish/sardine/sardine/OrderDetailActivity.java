@@ -253,6 +253,7 @@ public class OrderDetailActivity extends AppCompatActivity {
                                         map.put("English Name",fishClass.eng);
                                         map.put("Malayalam Name",fishClass.mal);
                                         map.put("Price",fishClass.price);
+                                        map.put("Status","Not Paid");
                                         map.put("Order Date",ft.format(dNow));
                                         final ProgressDialog progressDialog = new ProgressDialog(OrderDetailActivity.this);
                                         progressDialog.setTitle("Uploading");
