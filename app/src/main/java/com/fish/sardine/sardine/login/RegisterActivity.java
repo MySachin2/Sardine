@@ -94,6 +94,7 @@ public class RegisterActivity extends AppCompatActivity  {
         progressDialog.show();
         if(sharedPreferences.contains("uid")) {
             uid = sharedPreferences.getString("uid", "");
+            Log.d("UID_Register",uid);
             mRef.child("Users").orderByKey().equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -119,29 +120,19 @@ public class RegisterActivity extends AppCompatActivity  {
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                mRef.child("Users").orderByKey().equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Map<String,String> map = new HashMap<String, String>();
-                        map.put("Address",address_edit.getText().toString());
-                        map.put("Name",name_edit.getText().toString());
-                        Log.d("Datasnap ",dataSnapshot.toString());
-                        for(DataSnapshot postSnapshot : dataSnapshot.getChildren())
-                        {
-                            postSnapshot.getRef().setValue(map);
-                        }
-                        progressDialog.dismiss();
-                        editor.putString("address",address_edit.getText().toString());
-                        editor.putString("name",name_edit.getText().toString());
-                        editor.commit();
-                        startActivity(new Intent(RegisterActivity.this,MainActivity.class));
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
+                ;
+                Map<String,String>  map = new HashMap<String, String>();
+                map.put("Address",address_edit.getText().toString());
+                map.put("Name",name_edit.getText().toString());
+                map.put("Phone",sharedPreferences.getString("phone",""));
+               mRef.child("Users").child(uid).setValue(map, new DatabaseReference.CompletionListener() {
+                   @Override
+                   public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                       editor.putString("address",address_edit.getText().toString());
+                       editor.commit();
+                       startActivity(new Intent(RegisterActivity.this,MainActivity.class));
+                   }
+               });
             }
         });
 

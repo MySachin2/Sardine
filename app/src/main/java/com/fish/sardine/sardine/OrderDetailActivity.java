@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.v7.graphics.Palette;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -100,9 +101,10 @@ public class OrderDetailActivity extends AppCompatActivity {
                     String stripped = price.getText().toString().split("/")[0];
                     double p = Integer.parseInt(stripped);
                     int t = (int)(n*p);
-
-                    quantity.setText(String.valueOf(n));
-                    total.setText(String.valueOf(t));
+                    if(t>=0) {
+                        quantity.setText(String.valueOf(n));
+                        total.setText(String.valueOf(t));
+                    }
                 }
                 catch (Exception e)
                 {
@@ -111,6 +113,31 @@ public class OrderDetailActivity extends AppCompatActivity {
                 }
             }
         });
+
+        InputFilter filter = new InputFilter() {
+            public CharSequence filter(CharSequence source, int start, int end,
+                                       Spanned dest, int dstart, int dend) {
+                try {
+                    if (dest.charAt(dest.length() - 1) == '.') {
+                        if (!source.equals("2") && !source.equals("5") && !source.equals("7") && !source.equals("0")) {
+                            return "";
+                        }
+                    } else if (dest.charAt(dest.length() - 2) == '.') {
+                        if (!source.equals("0") && !source.equals("5")) {
+                            return "";
+                        }
+                    } else if (dest.charAt(dest.length() - 3) == '.') {
+                        return "";
+                    }
+                }
+                catch (IndexOutOfBoundsException e)
+                {
+
+                }
+                return null;
+            }
+        };
+        quantity.setFilters(new InputFilter[] { filter });
         quantity.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
