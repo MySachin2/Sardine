@@ -142,13 +142,7 @@
             android:background="#00FFFFFF"
             android:text="Confirm Order"
             android:textColor="#FFF"
-
             />
-        <com.github.mmin18.widget.RealtimeBlurView
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            app:realtimeBlurRadius="10dp"
-            app:realtimeOverlayColor="#8555" />
     </RelativeLayout>
 
     <RelativeLayout
