@@ -60,7 +60,7 @@ public class RegisterActivity extends AppCompatActivity  {
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     DatabaseReference mRef;
-    String uid;
+    String uid, role;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +102,11 @@ public class RegisterActivity extends AppCompatActivity  {
                     {
                         address_edit.setText(postSnapshot.child("Address").getValue(String.class));
                         name_edit.setText(postSnapshot.child("Name").getValue(String.class));
+                        if(postSnapshot.hasChild("role"))
+                        {
+                            role = postSnapshot.child("role").getValue(String.class);
+                            editor.putString("role", role);
+                        }
                     }
                     progressDialog.dismiss();
                 }

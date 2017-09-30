@@ -40,4 +40,8 @@
     </string>
     <string name="address">Address</string>
     <string name="name">Name</string>
+    <string name="price">Price</string>
+    <string name="txt_buy">Buy now</string>
+    <string name="submit">Submit</string>
+    <string name="total_qty">Total quantity</string>
 </resources>

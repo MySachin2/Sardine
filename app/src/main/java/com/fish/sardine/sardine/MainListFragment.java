@@ -31,6 +31,7 @@ public class MainListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main_list, container, false);
         mRef = FirebaseDatabase.getInstance().getReference();
+        mRef.keepSynced(true);
         viewpager = (ViewPager) view.findViewById(R.id.viewpager);
         indicator = (CircleIndicator) view.findViewById(R.id.indicator);
 

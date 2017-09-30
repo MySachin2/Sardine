@@ -233,6 +233,7 @@ public class LoginActivity extends AppCompatActivity  {
                             final FirebaseUser user = task.getResult().getUser();
                             progressDialog.setTitle("Saving to Server");
                             progressDialog.show();
+                            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
                             mRef = FirebaseDatabase.getInstance().getReference();
                             mRef.child("Phone Reference").child(user.getPhoneNumber()).setValue(user.getUid(), new DatabaseReference.CompletionListener(){
                                 @Override

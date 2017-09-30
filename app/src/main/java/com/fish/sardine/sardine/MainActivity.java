@@ -9,6 +9,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -19,6 +20,7 @@ public class MainActivity extends AppCompatActivity
     NavigationView navigationView;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
+    String roleText;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +46,19 @@ public class MainActivity extends AppCompatActivity
         name.setText(sharedPreferences.getString("name",""));
         phone.setText(sharedPreferences.getString("phone",""));
 
+        roleText = sharedPreferences.getString("role","");
+        if (roleText.equals("admin")) {
+            addMenuItemInNavMenuDrawer();
+        }
+
+    }
+    private void addMenuItemInNavMenuDrawer() {
+        Menu menu = navigationView.getMenu();
+        Menu submenu = menu.addSubMenu("Admin Area");
+
+        submenu.add(R.id.main_nav, 9567909, Menu.NONE, "Add Fish").setIcon(R.drawable.ic_add_circle_black_24dp);
+
+        navigationView.invalidate();
     }
 
     @Override
@@ -101,6 +116,8 @@ public class MainActivity extends AppCompatActivity
 
         }else if (id == R.id.nav_contact) {
 
+        }else if (id == 9567909) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, new FragmentAddFish(),"AddFishFragment").commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

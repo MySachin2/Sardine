@@ -14,4 +14,8 @@ public class FishClass implements Serializable{
     public String toString() {
         return eng + " " + mal + " " + img + " " + price;
     }
+
+    public String getEng() {
+        return eng;
+    }
 }

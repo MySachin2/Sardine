@@ -80,7 +80,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="6dp"
-            android:text="Buy now"
+            android:text="@string/txt_buy"
             android:theme="@style/PrimaryButton" />
     </RelativeLayout>
 </android.support.v7.widget.CardView>
