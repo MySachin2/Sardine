@@ -12,6 +12,11 @@
         android:layout_height="match_parent"
         android:src="@drawable/beach"
         android:scaleType="fitXY"/>
+    <com.github.mmin18.widget.RealtimeBlurView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:realtimeBlurRadius="20dp"
+        app:realtimeOverlayColor="#8000" />
     <ImageView
         android:id="@+id/fish_icon"
         android:layout_width="80dp"
@@ -19,7 +24,7 @@
         android:layout_centerHorizontal="true"
         android:src="@drawable/fish_round"
 
-        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingTop="25dp"
         />
 
     <ScrollView
@@ -49,7 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:textColorHint="#000">
+                android:textColorHint="#FFF">
 
                 <EditText
                     android:id="@+id/name"
@@ -59,7 +64,7 @@
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:textColor="#000"/>
+                    android:textColor="#FFF"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -67,7 +72,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:textColorHint="#000">
+                android:textColorHint="#FFF">
 
                 <EditText
                     android:id="@+id/address"
@@ -80,7 +85,7 @@
                     android:inputType="textMultiLine"
                     android:lines="5"
                     android:gravity="top"
-                    android:textColor="#000"/>
+                    android:textColor="#FFF"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -94,7 +99,7 @@
                 android:layout_marginBottom="16dp"
                 android:textStyle="bold"
                 android:background="?android:selectableItemBackground"
-                android:textColor="#000"
+                android:textColor="#FFF"
                 android:layout_gravity="center"
                 android:padding="5dp"/>
 

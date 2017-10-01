@@ -43,8 +43,8 @@ public class FragmentViewOrders extends Fragment {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        String uid = sharedPreferences.getString("uid","");
-        mRef.child("Order").child("By User").child(uid).orderByChild("Order Date").addListenerForSingleValueEvent(new ValueEventListener() {
+        String phone = sharedPreferences.getString("phone","");
+        mRef.child("Order").child("By User").child(phone).orderByChild("Order Date").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d("DATAS",dataSnapshot.toString());

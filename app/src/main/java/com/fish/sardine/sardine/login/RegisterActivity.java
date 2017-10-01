@@ -102,10 +102,11 @@ public class RegisterActivity extends AppCompatActivity  {
                     {
                         address_edit.setText(postSnapshot.child("Address").getValue(String.class));
                         name_edit.setText(postSnapshot.child("Name").getValue(String.class));
-                        if(postSnapshot.hasChild("role"))
+                        if(postSnapshot.hasChild("Role"))
                         {
-                            role = postSnapshot.child("role").getValue(String.class);
+                            role = postSnapshot.child("Role").getValue(String.class);
                             editor.putString("role", role);
+                            editor.commit();
                         }
                     }
                     progressDialog.dismiss();

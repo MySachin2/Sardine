@@ -258,8 +258,8 @@ public class OrderDetailActivity extends AppCompatActivity {
                                         final ProgressDialog progressDialog = new ProgressDialog(OrderDetailActivity.this);
                                         progressDialog.setTitle("Uploading");
                                         progressDialog.show();
-                                       final  String uid = sharedPreferences.getString("uid","");
-                                        mRef.child("Order").child("By User").child(uid).push().setValue(map, new DatabaseReference.CompletionListener() {
+                                       final  String phone = sharedPreferences.getString("phone","");
+                                        mRef.child("Order").child("By User").child(phone).push().setValue(map, new DatabaseReference.CompletionListener() {
                                             @Override
                                             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                                                 progressDialog.dismiss();

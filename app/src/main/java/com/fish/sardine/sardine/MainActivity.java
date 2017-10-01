@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity
         phone.setText(sharedPreferences.getString("phone",""));
 
         roleText = sharedPreferences.getString("role","");
-        if (roleText.equals("admin")) {
+        if (roleText.equals("Admin")) {
             addMenuItemInNavMenuDrawer();
         }
 
