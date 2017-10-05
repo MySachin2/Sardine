@@ -60,7 +60,8 @@ public class RegisterActivity extends AppCompatActivity  {
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     DatabaseReference mRef;
-    String uid, role;
+    String uid, role , phone;
+    boolean registered = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,15 +79,6 @@ public class RegisterActivity extends AppCompatActivity  {
         address_edit = (EditText) findViewById(R.id.address);
 
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                editor.putString("address",address_edit.getText().toString());
-                editor.commit();
-                startActivity(new Intent(RegisterActivity.this, MainActivity.class));
-                finish();
-            }
-        });
         mLoginFormView = findViewById(R.id.login_form);
         final ProgressDialog progressDialog = new ProgressDialog(RegisterActivity.this);
         progressDialog.setTitle("Checking for Address");
@@ -94,6 +86,7 @@ public class RegisterActivity extends AppCompatActivity  {
         progressDialog.show();
         if(sharedPreferences.contains("uid")) {
             uid = sharedPreferences.getString("uid", "");
+            phone = sharedPreferences.getString("phone", "");
             Log.d("UID_Register",uid);
             mRef.child("Users").orderByKey().equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -122,24 +115,60 @@ public class RegisterActivity extends AppCompatActivity  {
         {
             editor.clear();
             editor.commit();
+            finish();
         }
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
+
             @Override
             public void onClick(View view) {
                 ;
-                Map<String,String>  map = new HashMap<String, String>();
+                final Map<String,String>  map = new HashMap<String, String>();
                 map.put("Address",address_edit.getText().toString());
                 map.put("Name",name_edit.getText().toString());
                 map.put("Phone",sharedPreferences.getString("phone",""));
-               mRef.child("Users").child(uid).setValue(map, new DatabaseReference.CompletionListener() {
-                   @Override
-                   public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                       editor.putString("address",address_edit.getText().toString());
-                       editor.putString("name",name_edit.getText().toString());
-                       editor.commit();
-                       startActivity(new Intent(RegisterActivity.this,MainActivity.class));
-                   }
-               });
+                map.put("Role",sharedPreferences.getString("role","Customer"));
+                mRef.child("Phone Reference").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.hasChild(phone))
+                        {
+                            mRef.child("Users").child(uid).child("Address").setValue(address_edit.getText().toString(), new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                    editor.putString("address",address_edit.getText().toString());
+                                    mRef.child("Users").child(uid).child("Name").setValue(name_edit.getText().toString(), new DatabaseReference.CompletionListener() {
+                                        @Override
+                                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                            editor.putString("name",address_edit.getText().toString());
+                                            editor.commit();
+                                            startActivity(new Intent(RegisterActivity.this,MainActivity.class));
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                        else
+                        {
+                            mRef.child("Users").child(uid).setValue(map, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                    editor.putString("address",address_edit.getText().toString());
+                                    editor.putString("name",name_edit.getText().toString());
+                                    editor.commit();
+                                    startActivity(new Intent(RegisterActivity.this,MainActivity.class));
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+
+
             }
         });
 
