@@ -121,7 +121,6 @@ public class RegisterActivity extends AppCompatActivity  {
 
             @Override
             public void onClick(View view) {
-                ;
                 final Map<String,String>  map = new HashMap<String, String>();
                 map.put("Address",address_edit.getText().toString());
                 map.put("Name",name_edit.getText().toString());

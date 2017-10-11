@@ -44,4 +44,9 @@
     <string name="txt_buy">Buy now</string>
     <string name="submit">Submit</string>
     <string name="total_qty">Total quantity</string>
+    <string name="home">Home</string>
+    <string name="orders">Orders</string>
+    <string name="add_fish">Add fish</string>
+    <string name="communicate">Communicate</string>
+    <string name="contact_us">Contact us</string>
 </resources>

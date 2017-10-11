@@ -9,7 +9,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -47,16 +46,14 @@ public class MainActivity extends AppCompatActivity
         phone.setText(sharedPreferences.getString("phone",""));
 
         roleText = sharedPreferences.getString("role","");
-        if (roleText.equals("Admin")) {
-            addMenuItemInNavMenuDrawer();
+        if (!roleText.equals("Admin")) {
+            removeMenuItemInNavMenuDrawer();
         }
 
     }
-    private void addMenuItemInNavMenuDrawer() {
+    private void removeMenuItemInNavMenuDrawer() {
         Menu menu = navigationView.getMenu();
-        Menu submenu = menu.addSubMenu("Admin Area");
-
-        submenu.add(R.id.main_nav, 9567909, Menu.NONE, "Add Fish").setIcon(R.drawable.ic_add_circle_black_24dp);
+        menu.removeItem(R.id.nav_add_fish);
 
         navigationView.invalidate();
     }
