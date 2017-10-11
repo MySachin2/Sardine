@@ -9,6 +9,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity
         phone.setText(sharedPreferences.getString("phone",""));
 
         roleText = sharedPreferences.getString("role","");
+        Log.d("ROle",roleText);
         if (!roleText.equals("Admin")) {
             removeMenuItemInNavMenuDrawer();
         }
@@ -113,7 +115,7 @@ public class MainActivity extends AppCompatActivity
 
         }else if (id == R.id.nav_contact) {
 
-        }else if (id == 9567909) {
+        }else if (id == R.id.nav_add_fish) {
             getSupportFragmentManager().beginTransaction().replace(R.id.container, new FragmentAddFish(),"AddFishFragment").commit();
         }
 

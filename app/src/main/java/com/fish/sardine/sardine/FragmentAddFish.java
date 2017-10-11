@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -12,21 +13,18 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
+import android.widget.Toast;
 
-import com.fish.sardine.sardine.utils.ImageCompression;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -46,11 +44,9 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
-import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
 
 public class FragmentAddFish extends Fragment {
 
@@ -59,14 +55,14 @@ public class FragmentAddFish extends Fragment {
     DatabaseReference mRef, ref;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
-    private AutoCompleteTextView mActv;
+    private Spinner spinner;
     ImageView imageViewFish;
     ProgressBar pBar;
     FirebaseStorage storage;
     private Uri fileUri, downloadUrl;
     String mCurrentPhotoPath, currentFish, mPrice, mtotal;
     EditText mPriceEdit, mTotalEdit;
-
+    boolean photoTaken = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -77,7 +73,7 @@ public class FragmentAddFish extends Fragment {
         storage = FirebaseStorage.getInstance();
 
         final ArrayList<String> fishes = new ArrayList<String>();
-        mActv = (AutoCompleteTextView) view.findViewById(R.id.name);
+        spinner = (Spinner) view.findViewById(R.id.name);
         imageViewFish = (ImageView) view.findViewById(R.id.imageView2);
         mPriceEdit = (EditText) view.findViewById(R.id.price);
         mTotalEdit = (EditText) view.findViewById(R.id.total_qty);
@@ -85,43 +81,103 @@ public class FragmentAddFish extends Fragment {
         editor = sharedPreferences.edit();
 
         mRef = FirebaseDatabase.getInstance().getReference();
-        ref = mRef.child("Fish");
-        ValueEventListener eventListener = new ValueEventListener() {
+        mRef.child("Fish").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot ds : dataSnapshot.getChildren()) {
-                    fishes.add(ds.getKey().toString());
+                    fishes.add(ds.getKey());
                 }
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>
+                        (getContext(),android.R.layout.simple_list_item_1,fishes);
+                spinner.setAdapter(adapter);
+                spinner.setSelection(0);
             }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
-        };
-        ref.addListenerForSingleValueEvent(eventListener);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>
-                (getContext(),android.R.layout.simple_list_item_1,fishes);
-        mActv.setThreshold(1);
-        mActv.setAdapter(adapter);
 
-        currentFish = mActv.getText().toString();
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         imageViewFish.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                if (!mActv.getText().toString().matches("")){
-                    dispatchTakePictureIntent();
-                } else {
-                    mActv.setError("This field id required!");
-                }
+            public void onClick(View view) {
+                dispatchTakePictureIntent();
             }
         });
-        mPrice = mPriceEdit.getText().toString();
-        mtotal = mTotalEdit.getText().toString();
+
+
+
         view.findViewById(R.id.btn_submit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ref.child("Mackerel").child("Image").setValue(downloadUrl.toString());
-                ref.child("Mackerel").child("Price").setValue(mPrice);
-                ref.child("Mackerel").child("Total").setValue(mtotal);
+                mPrice = mPriceEdit.getText().toString();
+                mtotal = mTotalEdit.getText().toString();
+                currentFish = spinner.getSelectedItem().toString();
+                if(TextUtils.isEmpty(mPrice))
+                {
+                    mPriceEdit.setError("Price cannot be empty");
+                }
+                else if(TextUtils.isEmpty(mtotal))
+                {
+                    mTotalEdit.setError("Quantity cannot be empty");
+                }
+                else if(!photoTaken)
+                {
+                    Toast.makeText(getActivity(),"Photo not taken",Toast.LENGTH_LONG).show();
+                }
+                else {
+                    StorageReference storageReference = storage
+                            .getReferenceFromUrl("gs://sardine-b43e1.appspot.com")
+                            .child(spinner.getSelectedItem().toString() + ".jpg");
+                    imageViewFish.setDrawingCacheEnabled(true);
+                    imageViewFish.buildDrawingCache();
+                    Bitmap bitmap = imageViewFish.getDrawingCache();
+
+                    pBar.setVisibility(View.VISIBLE);
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
+                    byte[] dataB = baos.toByteArray();
+
+
+
+                    UploadTask uploadTask = storageReference.putBytes(dataB);
+                    uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                            Log.d("Progress", "Upload is " + progress + "% done");
+                            int p = (int) progress;
+                            pBar.setProgress(p);
+                        }
+                    }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
+                            System.out.println("Upload is paused");
+                        }
+                    });
+                    uploadTask.addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Handle unsuccessful uploads
+                            pBar.setVisibility(View.INVISIBLE);
+                        }
+                    }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                            pBar.setVisibility(View.INVISIBLE);
+                            downloadUrl = taskSnapshot.getDownloadUrl();
+                            System.out.println("Success");
+                            System.out.println(downloadUrl);
+
+                            mRef.child("Fish").child(currentFish).child("Image").setValue(downloadUrl.toString());
+                            mRef.child("Fish").child(currentFish).child("Price").setValue(mPrice);
+                            mRef.child("Fish").child(currentFish).child("Total").setValue(mtotal);
+                        }
+                    });
+                }
+
 //                if (!mPrice.matches("") && !mtotal.matches("")) {
 //                    ref.child("Mackerel").child("Image").setValue(downloadUrl.toString());
 //                    ref.child("Mackerel").child("Price").setValue(mPrice);
@@ -181,49 +237,14 @@ public class FragmentAddFish extends Fragment {
 //            String compressedImageFilePath = ic.compressImage(mCurrentPhotoPath);
             final Bitmap imageBitmap = BitmapFactory.decodeFile(mCurrentPhotoPath,options);
             Log.d("mCurrentPhotoPath",mCurrentPhotoPath);
+//            Matrix matrix = new Matrix();
+//            matrix.postRotate(90);
+//            Bitmap rotatedBitmap = Bitmap.createBitmap(imageBitmap , 0, 0, imageBitmap .getWidth(), imageBitmap .getHeight(), matrix, true);
             imageViewFish.setImageBitmap(imageBitmap);
+            photoTaken = true;
             //pBar.setVisibility(View.VISIBLE);
 
-            StorageReference storageReference = storage
-                    .getReferenceFromUrl("gs://sardine-b43e1.appspot.com")
-                    .child(mActv.getText().toString()+".jpg");
-            imageViewFish.setDrawingCacheEnabled(true);
-            imageViewFish.buildDrawingCache();
-            Bitmap bitmap = imageViewFish.getDrawingCache();
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
-            byte[] dataB = baos.toByteArray();
-
-            UploadTask uploadTask = storageReference.putBytes(dataB);
-            uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                    double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                    Log.d("Progress","Upload is " + progress + "% done");
-                    int p = (int)progress;
-                    pBar.setProgress(p);
-                }
-            }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
-                    System.out.println("Upload is paused");
-                }
-            });
-            uploadTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle unsuccessful uploads
-                    pBar.setVisibility(View.INVISIBLE);
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                    pBar.setVisibility(View.INVISIBLE);
-                    downloadUrl = taskSnapshot.getDownloadUrl();
-                }
-            });
         }
     }
 }
